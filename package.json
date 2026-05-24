@@ -1,0 +1,17 @@
+{
+  "name": "cityscout-pipeline-assignment",
+  "version": "1.0.0",
+  "description": "CityScout data pipeline take-home: portal research, data transform, AI extraction",
+  "main": "transform.js",
+  "scripts": {
+    "transform": "node transform.js",
+    "extract": "node extract.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "UNLICENSED"
+}
