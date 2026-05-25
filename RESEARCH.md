@@ -69,6 +69,26 @@
 The "Issued Construction Permits" dataset (`3syk-w9eu`) includes:
 `PermitNum`, `PermitClass`, `StatusCurrent`, `AppliedDate`, `IssuedDate`, `FinaledDate`, `ExpiresDate`, `Description`, `Address`, `Latitude`, `Longitude`, `ContractorTrade`, `ContractorCompanyName`, `ContractorLicNum`, `ProjectName`, `EstimatedProjectCost`, `NumberOfUnits`
 
+### Permit Number Structure (from AB+C Manual)
+Per the [AB+C User Manual](https://www.austintexas.gov/transportation-public-works/abc-manual), permit numbers use structured type suffixes that are machine-parseable:
+
+| Suffix | Type | Subtypes |
+|--------|------|----------|
+| `BP` | Building Permit | 45 subtypes |
+| `EP` | Electrical Permit | 36 subtypes |
+| `MP` | Mechanical Permit | — |
+| `PP` | Plumbing Permit | — |
+| `PR` | Plan Review | 40 subtypes |
+
+46+ total categories exist. This means the permit type is encoded directly in the permit number (e.g. `2024-001234 BP`) — a pipeline can reliably parse permit class from the suffix without depending on a separate `PermitClass` field, which is useful when the Socrata export omits or misclassifies records.
+
+### AB+C Status Taxonomy (from AB+C Manual)
+The manual documents 30+ workflow statuses that differ significantly from the smaller set in the Socrata export. Statuses specific to AB+C that a normalizer must handle include:
+
+`Internet Pending`, `Queue`, `In E-Review`, `Awaiting Update - Fees Due`, `Admin Hold`
+
+These do not appear in the Socrata dataset and would silently fall through any normalization map built only from the open data. Any scraper targeting AB+C directly needs its own extended status mapping.
+
 ---
 
 ## 4. Attachment Availability
@@ -111,8 +131,6 @@ The "Issued Construction Permits" dataset (`3syk-w9eu`) includes:
 | Socrata "Issued Construction Permits" | 2357161 records | Based on the query tool they provided                         |
 
 | ArcGIS layers | Not record-based | Spatial layers (parcels, zoning polygons)                     |
-
-Querying the Socrata dataset with `$select=count(*)&$where=IssuedDate>'2020-01-01'` returns an authoritative count.
 
 ---
 
