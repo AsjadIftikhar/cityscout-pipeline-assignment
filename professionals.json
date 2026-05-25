@@ -7,7 +7,7 @@
         "role": "Developer",
         "firm": "Meridian Development Group LLC",
         "phone": "(615) 555-0142",
-        "email": "rchen@meridiandev.com",
+        "email": "RCHEN@MERIDIANDEV.COM",
         "license_number": null,
         "license_state": null
       },
@@ -16,7 +16,7 @@
         "role": "Civil Engineer",
         "firm": "Dale & Associates, Inc.",
         "phone": "(615) 297-5166",
-        "email": "mgarrigan@daleandassociates.net",
+        "email": "MGARRIGAN@DALEANDASSOCIATES.NET",
         "license_number": "112847",
         "license_state": "TN"
       },
@@ -25,7 +25,7 @@
         "role": "Architect",
         "firm": "EOA Architects",
         "phone": "(615) 742-4060",
-        "email": "jwilliams@eoaarchitects.com",
+        "email": "JWILLIAMS@EOAARCHITECTS.COM",
         "license_number": "A-8834",
         "license_state": "TN"
       },
@@ -43,7 +43,7 @@
         "role": "Landscape Architect",
         "firm": "Hawkins Partners Inc.",
         "phone": "(615) 255-2995",
-        "email": "hfleischer@hawkinspartners.com",
+        "email": "HFLEISCHER@HAWKINSPARTNERS.COM",
         "license_number": "LA-1244",
         "license_state": "TN"
       },
@@ -52,7 +52,7 @@
         "role": "Traffic Engineer",
         "firm": "RPM Transportation Consultants",
         "phone": "(615) 555-0199",
-        "email": "apatel@rpmtransportation.com",
+        "email": "APATEL@RPMTRANSPORTATION.COM",
         "license_number": null,
         "license_state": null
       },
@@ -121,14 +121,23 @@
         "firm": "Brasfield & Gorrie LLC",
         "phone": "(615) 665-0500",
         "email": "tbarnwell@brasfieldgorrie.com",
-        "license_number": "BC-22548",
-        "license_state": "TN"
+        "license_number": null,
+        "license_state": null
       }
     ]
   },
   {
     "document_id": "doc_3",
     "professionals": [
+      {
+        "name": "Michelle Torres, AICP",
+        "role": "Other",
+        "firm": "Nashville-Davidson County Planning Department",
+        "phone": null,
+        "email": null,
+        "license_number": null,
+        "license_state": null
+      },
       {
         "name": "Jason Adkins",
         "role": "Attorney",
@@ -144,7 +153,7 @@
         "firm": "Kimley-Horn and Associates",
         "phone": "615-564-2701",
         "email": null,
-        "license_number": "107223",
+        "license_number": "#107223",
         "license_state": "TN"
       },
       {

@@ -5,11 +5,11 @@ const path = require('path');
 
 // ─── Field extraction ─────────────────────────────────────────────────────────
 
-// Returns the first non-null, non-empty value found under any of the given keys.
+// Returns the first non-null, non-whitespace value found under any of the given keys.
 function pick(record, ...keys) {
   for (const key of keys) {
     const v = record[key];
-    if (v !== null && v !== undefined && v !== '') return v;
+    if (v !== null && v !== undefined && String(v).trim() !== '') return v;
   }
   return null;
 }
@@ -186,6 +186,14 @@ function parseCost(raw) {
   return isNaN(n) ? null : n;
 }
 
+// ─── Coordinate parsing ───────────────────────────────────────────────────────
+
+function parseCoord(raw) {
+  if (raw === null || raw === undefined) return null;
+  const n = parseFloat(raw);
+  return isNaN(n) ? null : n;
+}
+
 // ─── Address normalization (for dedup key only) ───────────────────────────────
 
 function addrKey(addr) {
@@ -215,19 +223,25 @@ function transform(raw) {
   // Must have at least a name or an address
   if (!name && !address) return null;
 
+  const cleanAddress = address
+    ? String(address).trim().replace(/\s+/g, ' ').replace(/[.,]+$/, '')
+    : null;
+
+  const description = pick(raw, 'desc', 'Description', 'project_description');
+
   return {
     proposal_number:  pick(raw, 'case_no', 'CaseNumber', 'permit_id'),
-    name:             name   ? String(name).trim()    : null,
-    address:          address ? String(address).trim().replace(/\s+/g, ' ') : null,
-    description:      pick(raw, 'desc', 'Description', 'project_description'),
+    name:             name        ? String(name).trim() : null,
+    address:          cleanAddress,
+    description:      description ? String(description).trim() : null,
     project_type:     normalizeProjectType(pick(raw, 'case_type', 'Type', 'permit_type')),
     status:           normalizeStatus(pick(raw, 'current_status', 'Status', 'status')),
     application_date: parseDate(pick(raw, 'filed_date', 'DateFiled', 'date_submitted')),
     applicant:        pick(raw, 'applicant_name', 'Applicant', 'applicant'),
     owner:            pick(raw, 'property_owner', 'Owner', 'owner_name'),
     estimated_cost:   parseCost(pick(raw, 'est_cost', 'EstimatedCost', 'valuation')),
-    latitude:         pick(raw, 'lat', 'Latitude', 'x_coord'),
-    longitude:        pick(raw, 'lng', 'Longitude', 'y_coord'),
+    latitude:         parseCoord(pick(raw, 'lat', 'Latitude', 'x_coord')),
+    longitude:        parseCoord(pick(raw, 'lng', 'Longitude', 'y_coord')),
     source_url:       pick(raw, 'portal_link', 'URL', 'link'),
     raw_data:         raw,
   };
@@ -265,20 +279,21 @@ function merge(a, b) {
 
 function deduplicate(records) {
   const byAddr  = new Map();  // normalized address → record
-  const noAddr  = new Map();  // proposal_number → record (no address to dedup on)
+  const byId    = new Map();  // proposal_number → record (no address)
+  const orphans = [];          // no address AND no proposal_number — keep all
 
   for (const r of records) {
     const key = addrKey(r.address);
-    if (!key) {
-      noAddr.set(r.proposal_number, r);
-    } else if (byAddr.has(key)) {
-      byAddr.set(key, merge(byAddr.get(key), r));
+    if (key) {
+      byAddr.set(key, byAddr.has(key) ? merge(byAddr.get(key), r) : r);
+    } else if (r.proposal_number) {
+      byId.set(r.proposal_number, byId.has(r.proposal_number) ? merge(byId.get(r.proposal_number), r) : r);
     } else {
-      byAddr.set(key, r);
+      orphans.push(r);
     }
   }
 
-  return [...byAddr.values(), ...noAddr.values()];
+  return [...byAddr.values(), ...byId.values(), ...orphans];
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
