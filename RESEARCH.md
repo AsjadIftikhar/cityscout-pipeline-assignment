@@ -83,7 +83,7 @@ The "Issued Construction Permits" dataset (`3syk-w9eu`) includes:
 ## 4. Attachment Availability
 
 - **AB+C portal:** Attachments (plans, applications) are listed in the "Attachments" tab of each permit record. **Most are publicly accessible without login** for permits that have reached "Issued" status. Earlier-stage plans (under review) are sometimes restricted and require applicant or contractor login.
-- **Legistar:** Staff reports, ordinances, and backup documents for council agenda items are fully public (PDF links in agenda packets).
+- **Council Agendas (austintexas.gov):** Staff reports, ordinances, and backup PDFs for rezoning/variance cases are publicly accessible — linked from agenda packets on the city website.
 - **Open Data Portal:** No attachment links — the dataset contains structured fields only.
 - **ArcGIS:** No document attachments — spatial data only.
 
@@ -124,7 +124,7 @@ The "Issued Construction Permits" dataset (`3syk-w9eu`) includes:
 |--------|----------|-------|
 | AB+C building permits | ~220,000 records | Austin issues ~40,000–45,000 permits/year; 5 years ≈ 200,000+ |
 | Socrata "Issued Construction Permits" | ~85,000 records | Filtered to construction permits only (subset of above) |
-| Legistar planning/zoning cases | ~3,000–5,000 | Major rezoning/variance cases; lower volume than permits |
+| Council agenda/rezoning cases (austintexas.gov) | ~3,000–5,000 | Major rezoning/variance cases; lower volume than permits |
 | ArcGIS layers | Not record-based | Spatial layers (parcels, zoning polygons) |
 
 Querying the Socrata dataset with `$select=count(*)&$where=IssuedDate>'2020-01-01'` returns an authoritative count.
@@ -135,7 +135,7 @@ Querying the Socrata dataset with `$select=count(*)&$where=IssuedDate>'2020-01-0
 
 | Limitation | Detail |
 |-----------|--------|
-| **No unified planning case portal** | Building permits (AB+C/Accela) and planning/rezoning cases (Legistar) live in separate systems with different record numbers and no shared ID |
+| **No unified planning case portal** | Building permits (AB+C/Accela) and planning/rezoning cases (council agendas on austintexas.gov) live in separate systems with different record numbers and no shared ID |
 | **Accela has no public API** | Must scrape HTML; Accela uses VIEWSTATE form fields making it moderately CSRF-protected |
 | **Status labels are inconsistent** | AB+C uses ~30 different status strings; Socrata dataset uses a different (smaller) set |
 | **Attachments are session-locked** | Bulk downloading plans requires authenticated sessions and is rate-limited |
