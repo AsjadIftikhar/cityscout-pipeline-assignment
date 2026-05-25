@@ -7,14 +7,15 @@
 | Austin Build + Connect (AB+C) | https://abc.austintexas.gov/ | Building permits, plan review, trade permits |
 | Austin Open Data Portal | https://data.austintexas.gov/ | Bulk permit data export + REST API |
 | Development Services ArcGIS Hub | https://austintexas.hub.arcgis.com/ | Mapping layers, zoning, planning cases |
-| Austin Legistar | https://austin.legistar.com/ | City council cases, zoning ordinances, rezoning actions |
+| Austin City Council Agendas | https://www.austintexas.gov/department/city-council | Council meeting agendas, backup documents, rezoning actions |
 
 **How I found them:**
 - Googled "Austin TX building permit search" → AB+C is the top result
 - Googled "Austin TX open data permits" → data.austintexas.gov
-- Checked Austin's Development Services Dept page (austintexas.gov/department/development-services) — it links to all four portals
+- Checked Austin's Development Services Dept page (austintexas.gov/department/development-services) — it links to AB+C and the open data portal
 - Inspected AB+C in DevTools Network tab: saw `AccelaCA` cookies, `Accela` in JS bundle filenames → confirmed Accela platform
 - Checked Austin's ArcGIS REST endpoint at `https://services.arcgis.com/0L95CJ0VTaxqcmED/arcgis/rest/services` → active feature services for zoning, parcels, permits
+- Austin does **not** appear to use Legistar for public-facing legislative records (I originally listed `austin.legistar.com` but that URL is inaccessible — Austin hosts council agendas and backup documents directly on austintexas.gov)
 
 ---
 
@@ -44,12 +45,10 @@
 - URL `austintexas.hub.arcgis.com` — standard Esri Hub subdomain pattern
 - REST endpoint `https://services.arcgis.com/0L95CJ0VTaxqcmED/arcgis/rest/services` returns standard ArcGIS REST API JSON
 
-### Legistar
-**Platform:** Granicus Legistar
+### Austin City Council Agendas
+**Platform:** Custom CMS on austintexas.gov (not Legistar)
 
-**Evidence:**
-- `austin.legistar.com` — standard Legistar subdomain
-- Page source contains `Legistar` in multiple script references
+**Note:** I originally listed `austin.legistar.com` as a Legistar instance but that URL is not accessible. Austin appears to publish council agendas, backup materials, and ordinance documents directly through their main city website rather than via a third-party legislative management platform. The backup PDFs for rezoning/variance cases are linked from agenda packets at austintexas.gov/department/city-council.
 
 ---
 
@@ -112,10 +111,10 @@ The "Issued Construction Permits" dataset (`3syk-w9eu`) includes:
 - Accela does offer a paid **Accela Construct API** but Austin does not appear to expose it publicly
 - **Scraping required** for permit detail pages; pagination uses `SkipCount` and `RecordCount` parameters in form POST body
 
-### Legistar
-- Granicus offers a public Legistar API: `https://webapi.legistar.com/v1/austin/`
-- Endpoints: `/matters`, `/bodies`, `/events`, `/votes` etc.
-- Returns JSON, no auth required for Austin
+### Council Agendas (austintexas.gov)
+- No structured API — agenda packets and backup PDFs are HTML pages with embedded links
+- Staff reports and rezoning case documents are downloadable PDFs, publicly accessible without login
+- Would require scraping the agenda listing pages to collect document URLs in bulk
 
 ---
 
