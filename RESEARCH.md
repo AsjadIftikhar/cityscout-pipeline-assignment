@@ -6,16 +6,14 @@
 |--------|-----|---------|
 | Austin Build + Connect (AB+C) | https://abc.austintexas.gov/ | Building permits, plan review, trade permits |
 | Austin Open Data Portal | https://data.austintexas.gov/ | Bulk permit data export + REST API |
-| Development Services ArcGIS Hub | https://austintexas.hub.arcgis.com/ | Mapping layers, zoning, planning cases |
-| Austin City Council Agendas | https://www.austintexas.gov/department/city-council | Council meeting agendas, backup documents, rezoning actions |
+| Development Services ArcGIS Hub | https://austintexas.hub.arcgis.com/ | Mapping layers, zoning, planning cases *(not fully researched — see §2)* |
 
 **How I found them:**
 - Googled "Austin TX building permit search" → AB+C is the top result
 - Googled "Austin TX open data permits" → data.austintexas.gov
 - Checked Austin's Development Services Dept page (austintexas.gov/department/development-services) — it links to AB+C and the open data portal
 - Inspected AB+C in DevTools Network tab: saw `AccelaCA` cookies, `Accela` in JS bundle filenames → confirmed Accela platform
-- Checked Austin's ArcGIS REST endpoint at `https://services.arcgis.com/0L95CJ0VTaxqcmED/arcgis/rest/services` → active feature services for zoning, parcels, permits
-- Austin does **not** appear to use Legistar for public-facing legislative records (I originally listed `austin.legistar.com` but that URL is inaccessible — Austin hosts council agendas and backup documents directly on austintexas.gov)
+- Found ArcGIS Hub at `austintexas.hub.arcgis.com` — requires login to access; REST services endpoint was not fully explored
 
 ---
 
@@ -39,16 +37,9 @@
 - API responses include Socrata metadata headers (`X-SODA2-*`)
 
 ### ArcGIS Hub
-**Platform:** Esri ArcGIS Hub
+**Platform:** Esri ArcGIS Hub (assumed from URL pattern — not fully verified)
 
-**Evidence:**
-- URL `austintexas.hub.arcgis.com` — standard Esri Hub subdomain pattern
-- REST endpoint `https://services.arcgis.com/0L95CJ0VTaxqcmED/arcgis/rest/services` returns standard ArcGIS REST API JSON
-
-### Austin City Council Agendas
-**Platform:** Custom CMS on austintexas.gov (not Legistar)
-
-**Note:** I originally listed `austin.legistar.com` as a Legistar instance but that URL is not accessible. Austin appears to publish council agendas, backup materials, and ordinance documents directly through their main city website rather than via a third-party legislative management platform. The backup PDFs for rezoning/variance cases are linked from agenda packets at austintexas.gov/department/city-council.
+**Note:** The Hub UI at `austintexas.hub.arcgis.com` presents an authentication screen; I was not able to browse its contents. The platform identification is inferred from the standard Esri Hub subdomain pattern. The ArcGIS REST services endpoint (`services.arcgis.com/0L95CJ0VTaxqcmED/...`) was not confirmed accessible. This section would need hands-on verification.
 
 ---
 
@@ -83,7 +74,6 @@ The "Issued Construction Permits" dataset (`3syk-w9eu`) includes:
 ## 4. Attachment Availability
 
 - **AB+C portal:** Attachments (plans, applications) are listed in the "Attachments" tab of each permit record. **Most are publicly accessible without login** for permits that have reached "Issued" status. Earlier-stage plans (under review) are sometimes restricted and require applicant or contractor login.
-- **Council Agendas (austintexas.gov):** Staff reports, ordinances, and backup PDFs for rezoning/variance cases are publicly accessible — linked from agenda packets on the city website.
 - **Open Data Portal:** No attachment links — the dataset contains structured fields only.
 - **ArcGIS:** No document attachments — spatial data only.
 
@@ -111,21 +101,16 @@ The "Issued Construction Permits" dataset (`3syk-w9eu`) includes:
 - Accela does offer a paid **Accela Construct API** but Austin does not appear to expose it publicly
 - **Scraping required** for permit detail pages; pagination uses `SkipCount` and `RecordCount` parameters in form POST body
 
-### Council Agendas (austintexas.gov)
-- No structured API — agenda packets and backup PDFs are HTML pages with embedded links
-- Staff reports and rezoning case documents are downloadable PDFs, publicly accessible without login
-- Would require scraping the agenda listing pages to collect document URLs in bulk
-
 ---
 
 ## 6. Estimated Volume (2020–Present)
 
-| Source | Estimate | Basis |
-|--------|----------|-------|
+| Source | Estimate | Basis                                                         |
+|--------|----------|---------------------------------------------------------------|
 | AB+C building permits | ~220,000 records | Austin issues ~40,000–45,000 permits/year; 5 years ≈ 200,000+ |
-| Socrata "Issued Construction Permits" | ~85,000 records | Filtered to construction permits only (subset of above) |
-| Council agenda/rezoning cases (austintexas.gov) | ~3,000–5,000 | Major rezoning/variance cases; lower volume than permits |
-| ArcGIS layers | Not record-based | Spatial layers (parcels, zoning polygons) |
+| Socrata "Issued Construction Permits" | 2357161 records | Based on the query tool they provided                         |
+
+| ArcGIS layers | Not record-based | Spatial layers (parcels, zoning polygons)                     |
 
 Querying the Socrata dataset with `$select=count(*)&$where=IssuedDate>'2020-01-01'` returns an authoritative count.
 
@@ -135,7 +120,7 @@ Querying the Socrata dataset with `$select=count(*)&$where=IssuedDate>'2020-01-0
 
 | Limitation | Detail |
 |-----------|--------|
-| **No unified planning case portal** | Building permits (AB+C/Accela) and planning/rezoning cases (council agendas on austintexas.gov) live in separate systems with different record numbers and no shared ID |
+| **No unified planning case portal** | Building permits live in AB+C/Accela; planning/rezoning cases are tracked separately — how Austin manages these was not fully determined |
 | **Accela has no public API** | Must scrape HTML; Accela uses VIEWSTATE form fields making it moderately CSRF-protected |
 | **Status labels are inconsistent** | AB+C uses ~30 different status strings; Socrata dataset uses a different (smaller) set |
 | **Attachments are session-locked** | Bulk downloading plans requires authenticated sessions and is rate-limited |
